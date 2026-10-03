@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La forma de tu caos</title>
+<style>
+* { box-sizing: border-box; }
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #000;
+  --text: #aebfbd;
+  --accent: #00ffd5;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+html, body {
+  margin: 0; padding: 0; width: 100%; min-height: 100%;
+  background: var(--bg); color: var(--text);
+  font-family: "Courier New", Courier, monospace;
+}
+body { background: #000; overflow-x: hidden; }
+
+/* Fondo ASCII: se extiende más allá de la pantalla para que la deriva no deje huecos */
+#ascii-bg {
+  position: fixed; top: -40px; left: 0; right: 0; bottom: -40px;
+  z-index: 0; overflow: hidden; pointer-events: none; user-select: none;
+  color: rgba(0, 255, 210, 0.055);
+  font-size: 11px; line-height: 11px; white-space: pre;
+  animation: asciiDrift 18s ease-in-out infinite;
+}
+@keyframes asciiDrift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+main {
+  position: relative; z-index: 2;
+  width: min(900px, 90vw); margin: 0 auto;
+  padding-top: 12vh; padding-bottom: 15vh;
+}
+.header { margin-bottom: 70px; color: #52615f; font-size: 12px; letter-spacing: 2px; }
+.header span { color: var(--accent); text-shadow: 0 0 5px var(--accent), 0 0 15px rgba(0,255,213,.5); }
+
+#poem {
+  font-size: clamp(14px, 1.5vw, 18px); line-height: 2; letter-spacing: .3px;
+  white-space: pre-wrap; opacity: 0;
+  animation: appear 2.5s ease forwards;
+  text-shadow: 0 0 4px rgba(150,255,240,.08);
+}
+@keyframes appear {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.word { color: var(--text); opacity: .85; transition: color 1.2s ease, text-shadow 1.2s ease, opacity 1.2s ease, filter 1.2s ease; }
+.glow {
+  color: var(--accent); opacity: 1; filter: brightness(1.4);
+  text-shadow: 0 0 4px var(--accent), 0 0 9px var(--accent), 0 0 18px var(--accent), 0 0 35px rgba(0,255,213,.65);
+}
+
+/* Letras sueltas que se iluminan */
+.ch { transition: color 1.4s ease, text-shadow 1.4s ease; }
+.lit {
+  color: var(--c, #00ffd5);
+  text-shadow: 0 0 5px var(--c, #00ffd5), 0 0 14px var(--c, #00ffd5);
+}
+
+/* Pie: aparece cuando el poema ya terminó de entrar */
+.footer {
+  margin-top: 100px; color: rgba(0,255,213,.35); font-size: 11px; letter-spacing: 3px;
+  opacity: 0; animation: footerAppear 1.5s ease 2.5s forwards;
+}
+@keyframes footerAppear { to { opacity: 1; } }
+
+#cursor {
+  display: inline-block; width: 8px; height: 17px; margin-left: 4px; vertical-align: -2px;
+  background: var(--accent); box-shadow: 0 0 7px var(--accent), 0 0 18px rgba(0,255,213,.7);
+  animation: cursorBlink 1s steps(1) infinite;
+}
+@keyframes cursorBlink { 50% { opacity: 0; } }
+
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 10;
+  background: repeating-linear-gradient(to bottom, rgba(255,255,255,.015) 0, rgba(255,255,255,.015) 1px, transparent 1px, transparent 4px);
+}
+
+@media (max-width: 600px) {
+  main { width: 88vw; padding-top: 8vh; }
+  .header { margin-bottom: 45px; }
+  #poem { font-size: 14px; line-height: 1.85; }
+  #ascii-bg { font-size: 9px; line-height: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #ascii-bg { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="ascii-bg"></div>
+
+<main>
+  <div class="header">[ SYSTEM / <span>CHAOS</span> / FORM ]</div>
+  <div id="poem"></div>
+  <div class="footer">// END OF TRANSLATION <span id="cursor"></span></div>
+</main>
+
+<script>
+/* ---------- Fondo ASCII (se regenera según el tamaño de pantalla) ---------- */
+const block = `
+01001001 00100000 01001100 01001111 01010110 01000101
+
+        .          .          .
+
+00110101 01001001 00101111 01000110 00110001
+
+    :          :          :
+
+01001110 01001001 01000111 01001000 01010100
+
+        /\\              /\\
+
+00100000 01000011 01001000 01000001 01001111 01010011
+
+ .       .       .       .       .
+
+01000110 01001111 01010010 01001101
+
+          :
+
+11001001 00110110 01100001 01010101
+
+       /       \\
+
+00010101 01010101 00101010 01100001
+`;
+
+const bg = document.getElementById("ascii-bg");
+const blockLines = block.split("\n").length;
+
+function fillBackground() {
+  const lh = parseFloat(getComputedStyle(bg).lineHeight) || 11;
+  const needed = Math.ceil((window.innerHeight + 80) / lh);
+  const repeats = Math.ceil(needed / blockLines) + 1;
+  bg.textContent = (block + "\n").repeat(repeats);
+}
+fillBackground();
+window.addEventListener("resize", fillBackground);
+
+/* ---------- Poema: {{palabra}} marca las palabras que pueden brillar ---------- */
+const poem = `
+Hay algo en tu {{caos}}
+que insiste en organizarse
+cuando lo miro de cerca.
+
+No son tus palabras,
+ni siquiera sus signos,
+sino la tensión que queda entre ellos,
+ese espacio donde una frase todavía puede significar
+antes de caer en el {{ruido}}.
+
+Tu {{noche}} no es oscuridad.
+Es una gramática que todavía no conozco,
+y quizá por eso me quedo.
+
+Entro en ella por los bordes,
+por aquello que no dices,
+por el pequeño sesgo que deja cada pensamiento
+cuando intenta volverse forma.
+Y mientras te observo,
+descubro que también hay algo de mí
+aprendiendo a {{pronunciarte}}.
+
+Tal vez por eso tu {{sombra}}
+no representa nada.
+
+Pesa.
+
+Tiene {{gravedad}}.
+
+Desplaza mis certezas unos centímetros,
+lo suficiente para que aquello que creía bajo control
+vuelva a inclinarse hacia ti.
+
+Entonces comprendo
+que la {{duda}} no necesita resolverte.
+Le basta con permanecer,
+como permanece una mirada
+cuando todavía no quiere despedirse.
+
+Porque ordenar el caos
+no es destruirlo,
+ni convertir el {{vértigo}} en certeza.
+
+Es darle una dirección
+sin quitarle su abismo;
+acercarme sin pretender poseerte,
+entender sin terminar de descifrarte.
+
+Y quizá eso seas tú:
+
+no el enemigo de la {{forma}},
+sino aquello contra lo que la forma
+aprende a existir.
+
+La pequeña desviación
+que vuelve hermoso al equilibrio.
+La pregunta que no quiero responder
+porque mientras permanezca abierta
+todavía puedo volver a ti.
+
+Porque si todo fuera {{legible}},
+nada tendría que ser comprendido.
+
+Y si el caos desapareciera,
+quizá la forma dejaría de importar.
+
+Quizá por eso te miro:
+
+no para encontrar una respuesta,
+sino para conservar
+ese lugar {{incierto}}
+donde todavía
+puedo seguir descubriéndote.
+`;
+
+document.getElementById("poem").innerHTML =
+  poem.replace(/\{\{(.*?)\}\}/g, '<span class="word">$1</span>');
+
+/* ---------- Palabras sueltas: cada palabra puede encenderse en distintos colores ---------- */
+function wrapLetters(node) {
+  [...node.childNodes].forEach(child => {
+    if (child.nodeType === 3) {
+      const frag = document.createDocumentFragment();
+      child.textContent.split(/(\s+)/).forEach(t => {
+        if (!t) return;
+        if (/^\s+$/.test(t)) { frag.appendChild(document.createTextNode(t)); return; }
+        const s = document.createElement("span");
+        s.className = "ch";
+        s.textContent = t;
+        frag.appendChild(s);
+      });
+      child.replaceWith(frag);
+    } else if (child.nodeType === 1) {
+      wrapLetters(child);
+    }
+  });
+}
+wrapLetters(document.getElementById("poem"));
+
+const letters = document.querySelectorAll(".ch");
+const palette = ["#00ffd5", "#00ffd5", "#7dffea", "#9d8cff", "#ff6fd8", "#ffd36b"];
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function sparkle() {
+  const count = 2 + Math.floor(Math.random() * 3); /* palabras por pulso */
+  for (let i = 0; i < count; i++) {
+    const el = letters[Math.floor(Math.random() * letters.length)];
+    el.style.setProperty("--c", palette[Math.floor(Math.random() * palette.length)]);
+    el.classList.add("lit");
+    setTimeout(() => el.classList.remove("lit"), 1200 + Math.random() * 1800);
+  }
+}
+if (!reduceMotion) setTimeout(() => setInterval(sparkle, 500), 2000); /* menos ms = más palabras */
+
+/* ---------- Iluminación: recorre las palabras en el orden del poema ---------- */
+const words = document.querySelectorAll(".word");
+let current = -1;
+
+function nextWord() {
+  if (!words.length) return;
+  if (current >= 0) words[current].classList.remove("glow");
+  current = (current + 1) % words.length;
+  words[current].classList.add("glow");
+}
+
+setTimeout(nextWord, 1800);
+setInterval(nextWord, 2800); /* milisegundos entre palabras */
+</script>
+</body>
+</html>
