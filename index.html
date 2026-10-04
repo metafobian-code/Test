@@ -60,7 +60,7 @@ main {
   text-shadow: 0 0 4px var(--accent), 0 0 9px var(--accent), 0 0 18px var(--accent), 0 0 35px rgba(0,255,213,.65);
 }
 
-/* Letras sueltas que se iluminan */
+/* Palabras sueltas que se iluminan */
 .ch { transition: color 1.4s ease, text-shadow 1.4s ease; }
 .lit {
   color: var(--c, #00ffd5);
@@ -149,7 +149,7 @@ function fillBackground() {
 fillBackground();
 window.addEventListener("resize", fillBackground);
 
-/* ---------- Poema: {{palabra}} marca las palabras que pueden brillar ---------- */
+/* ---------- Poema: {{palabra}} marca las palabras clave que brillan en orden ---------- */
 const poem = `
 Hay algo en tu {{caos}}
 que insiste en organizarse
@@ -161,26 +161,21 @@ sino la tensión que queda entre ellos,
 ese espacio donde una frase todavía puede significar
 antes de caer en el {{ruido}}.
 
-Tu {{noche}} no es oscuridad.
-Es una gramática que todavía no conozco,
-y quizá por eso me quedo.
-
-Entro en ella por los bordes,
-por aquello que no dices,
+Tu {{noche}} es mi gramática que todavía no conozco,
+entro en ella por los bordes,
 por el pequeño sesgo que deja cada pensamiento
 cuando intenta volverse forma.
-Y mientras te observo,
+Y mientras, observo,
 descubro que también hay algo de mí
 aprendiendo a {{pronunciarte}}.
 
 Tal vez por eso tu {{sombra}}
-no representa nada.
+no necesita representar nada.
+Simplemente está ahí,
+y aun así, {{pesa}}.
 
-Pesa.
-
-Tiene {{gravedad}}.
-
-Desplaza mis certezas unos centímetros,
+Tiene una forma extraña de acercarse,
+de mover mis {{certezas}} unos centímetros,
 lo suficiente para que aquello que creía bajo control
 vuelva a inclinarse hacia ti.
 
@@ -190,40 +185,17 @@ Le basta con permanecer,
 como permanece una mirada
 cuando todavía no quiere despedirse.
 
-Porque ordenar el caos
-no es destruirlo,
-ni convertir el {{vértigo}} en certeza.
+Quizá no quiero ordenar tu caos.
 
-Es darle una dirección
-sin quitarle su abismo;
-acercarme sin pretender poseerte,
-entender sin terminar de descifrarte.
+Solo quiero mirarlo de cerca,
+sin convertirlo en una {{respuesta}}.
 
-Y quizá eso seas tú:
-
-no el enemigo de la {{forma}},
-sino aquello contra lo que la forma
-aprende a existir.
-
-La pequeña desviación
-que vuelve hermoso al equilibrio.
-La pregunta que no quiero responder
-porque mientras permanezca abierta
-todavía puedo volver a ti.
-
-Porque si todo fuera {{legible}},
-nada tendría que ser comprendido.
-
-Y si el caos desapareciera,
-quizá la forma dejaría de importar.
+Hay algo que todavía no {{comprendo}}
+y, sin embargo, quiero seguir {{mirando}}.
 
 Quizá por eso te miro:
-
-no para encontrar una respuesta,
-sino para conservar
-ese lugar {{incierto}}
-donde todavía
-puedo seguir descubriéndote.
+no para {{descifrarte}},
+sino para seguir {{descubriéndote}}.
 `;
 
 document.getElementById("poem").innerHTML =
@@ -263,9 +235,9 @@ function sparkle() {
     setTimeout(() => el.classList.remove("lit"), 1200 + Math.random() * 1800);
   }
 }
-if (!reduceMotion) setTimeout(() => setInterval(sparkle, 500), 2000); /* menos ms = más palabras */
+if (!reduceMotion) setTimeout(() => setInterval(sparkle, 700), 2000); /* menos ms = más palabras */
 
-/* ---------- Iluminación: recorre las palabras en el orden del poema ---------- */
+/* ---------- Iluminación: recorre las palabras clave en el orden del poema ---------- */
 const words = document.querySelectorAll(".word");
 let current = -1;
 
